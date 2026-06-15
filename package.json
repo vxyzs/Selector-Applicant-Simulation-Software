@@ -38,7 +38,7 @@
     "langchain": "^1.4.4",
     "lottie-react": "^2.4.0",
     "mongodb": "^6.8.0",
-    "next": "14.1.4",
+    "next": "^14.2.23",
     "next-nprogress-bar": "^2.3.13",
     "nodemailer": "^8.0.11",
     "pdf-parse": "^1.1.4",
