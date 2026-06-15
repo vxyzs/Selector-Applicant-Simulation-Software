@@ -5,7 +5,7 @@ import { createInterviewSchema } from '@/lib/validations/zodSchemas';
 import { ObjectId } from 'mongodb';
 import { render } from '@react-email/render';
 import { sendEmail } from '@/lib/mailer';
-import InterviewInvite from '@/components/interviewInvite';
+import InterviewInvite from '@/components/InterviewInvite';
 
 export const dynamic = 'force-dynamic';
 
