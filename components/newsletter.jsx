@@ -8,7 +8,7 @@ export default function Newsletter() {
   const [emailCopied, setEmailCopied] = useState(false)
   const [templateCopied, setTemplateCopied] = useState(false)
 
-  const emailAddress = "admin@nexus-eval.com"
+  const emailAddress = "nexus.platform.team@gmail.com"
   const emailSubject = "Organization Registration Request"
   const emailBody = `Hi,
 
@@ -80,7 +80,7 @@ Lead Recruiter Designation: [Your Designation]`
                   <Link className="btn text-white bg-indigo-600 hover:bg-indigo-700 shadow-md font-semibold px-6 py-3 rounded-xl transition duration-150" href="/signup?role=candidate">
                     Register as Candidate
                   </Link>
-                  <button 
+                  <button
                     onClick={() => setIsOpen(true)}
                     className="btn text-indigo-200 bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-gray-600 shadow-md font-semibold px-6 py-3 rounded-xl transition duration-150 text-center"
                   >
