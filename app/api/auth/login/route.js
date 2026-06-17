@@ -8,7 +8,7 @@ import { config } from '@/lib/config';
 export async function POST(req) {
     // 1. Rate Limiting: 15 login attempts per minute per IP
     const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-    const rateLimit = checkRateLimit(`login_${ip}`, 15, 60000);
+    const rateLimit = await checkRateLimit(`login_${ip}`, 15, 60000);
     
     if (rateLimit.isRateLimited) {
         return new Response(JSON.stringify({ message: 'Too many login attempts. Please try again in a minute.' }), {

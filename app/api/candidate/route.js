@@ -10,7 +10,7 @@ import { deleteResume } from '@/services/resume/deleteResume';
 export async function PATCH(request) {
     // 1. Rate Limiting: 60 requests per minute per IP
     const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
-    const rateLimit = checkRateLimit(`candidate_${ip}`, 60, 60000);
+    const rateLimit = await checkRateLimit(`candidate_${ip}`, 60, 60000);
     
     if (rateLimit.isRateLimited) {
         return NextResponse.json({ error: 'Too many requests. Please try again later.' }, {

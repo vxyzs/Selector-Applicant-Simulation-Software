@@ -7,7 +7,7 @@ import { checkInterviewSchema } from '@/lib/validations/zodSchemas';
 export async function POST(req) {
     // 1. Rate Limiting: 60 requests per minute per IP
     const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-    const rateLimit = checkRateLimit(`checkinterview_${ip}`, 60, 60000);
+    const rateLimit = await checkRateLimit(`checkinterview_${ip}`, 60, 60000);
     
     if (rateLimit.isRateLimited) {
         return NextResponse.json({ error: 'Too many requests. Please try again later.' }, {

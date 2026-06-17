@@ -1,6 +1,20 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { z } from 'zod';
+import { Redis } from '@upstash/redis';
+import crypto from 'crypto';
+
+let redis = null;
+if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  try {
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+  } catch (e) {
+    console.error('Failed to initialize Upstash Redis client in generateQuestions:', e);
+  }
+}
 
 // Define the output schema using Zod for robust validation of dynamic categories
 const categoryStructureSchema = z.object({
@@ -282,6 +296,37 @@ export async function generateQuestions({
     ? `Expert Custom Focus Instructions: Generate questions targeting, focusing on, and testing these specific aspects: ${customPrompt.trim()}`
     : 'None.';
 
+  // Attempt to load from Redis cache
+  let cacheKey = '';
+  if (redis) {
+    try {
+      const resumeHash = crypto.createHash('sha256').update(resume).digest('hex');
+      const payloadStr = JSON.stringify({
+        resumeHash,
+        role,
+        level,
+        specialization,
+        targetLvl,
+        focus,
+        customGuidelines,
+        count
+      });
+      const payloadHash = crypto.createHash('sha256').update(payloadStr).digest('hex');
+      cacheKey = `nexus:ai_questions:${payloadHash}`;
+
+      const cachedResult = await redis.get(cacheKey);
+      if (cachedResult) {
+        console.log('[generateQuestions] Cache HIT! Returning cached questions.');
+        const parsed = typeof cachedResult === 'string' ? JSON.parse(cachedResult) : cachedResult;
+        if (parsed && parsed.interviewStructure) {
+          return parsed;
+        }
+      }
+    } catch (cacheErr) {
+      console.warn('[generateQuestions] Cache lookup failed:', cacheErr);
+    }
+  }
+
   try {
     const model = new ChatOpenAI({
       apiKey: process.env.HF_TOKEN || process.env.OPENAI_API_KEY || 'stub-key',
@@ -335,6 +380,17 @@ export async function generateQuestions({
     const parsedQuestionsJson = parseJSONOutput(questionsRaw);
 
     const validatedData = interviewStructureSchema.parse(parsedQuestionsJson);
+
+    // Save to Redis cache for 24 hours (86400 seconds)
+    if (redis && cacheKey) {
+      try {
+        await redis.set(cacheKey, JSON.stringify(validatedData), { ex: 86400 });
+        console.log('[generateQuestions] Successfully cached generated questions in Redis.');
+      } catch (cacheSaveErr) {
+        console.warn('[generateQuestions] Failed to save result to cache:', cacheSaveErr);
+      }
+    }
+
     return validatedData;
 
   } catch (error) {
@@ -343,3 +399,4 @@ export async function generateQuestions({
     return getFallbackQuestions(role, level, targetLvl, specialization, focus, customPrompt, count);
   }
 }
+

@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
 // GET: Fetch HR members (HR filters by organization, Admin can fetch all or filter by organization)
 export async function GET(req) {
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-  const rateLimit = checkRateLimit(`hr_get_${ip}`, 60, 60000);
+  const rateLimit = await checkRateLimit(`hr_get_${ip}`, 60, 60000);
   
   if (rateLimit.isRateLimited) {
     return new Response(JSON.stringify({ message: 'Too many requests. Please try again later.' }), {
@@ -87,7 +87,7 @@ export async function GET(req) {
 // POST: Add a new HR member (HR inherits organization, Admin specifies organization)
 export async function POST(req) {
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-  const rateLimit = checkRateLimit(`hr_post_${ip}`, 15, 60000);
+  const rateLimit = await checkRateLimit(`hr_post_${ip}`, 15, 60000);
   
   if (rateLimit.isRateLimited) {
     return new Response(JSON.stringify({ message: 'Too many requests. Please try again later.' }), {

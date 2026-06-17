@@ -12,7 +12,7 @@ const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 export async function GET(request) {
     // 1. Rate Limiting: 60 requests per minute per IP
     const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
-    const rateLimit = checkRateLimit(`interviews_get_single_${ip}`, 60, 60000);
+    const rateLimit = await checkRateLimit(`interviews_get_single_${ip}`, 60, 60000);
     
     if (rateLimit.isRateLimited) {
         return NextResponse.json({ error: 'Too many requests. Please try again later.' }, {

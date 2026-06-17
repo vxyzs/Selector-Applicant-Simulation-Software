@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(req) {
   // 1. Rate Limiting: 60 requests per minute per IP
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-  const rateLimit = checkRateLimit(`send_email_${ip}`, 60, 60000);
+  const rateLimit = await checkRateLimit(`send_email_${ip}`, 60, 60000);
   
   if (rateLimit.isRateLimited) {
     return NextResponse.json(

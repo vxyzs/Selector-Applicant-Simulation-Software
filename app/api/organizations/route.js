@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
 // GET: Fetch all organizations (Admin only)
 export async function GET(req) {
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-  const rateLimit = checkRateLimit(`org_get_${ip}`, 60, 60000);
+  const rateLimit = await checkRateLimit(`org_get_${ip}`, 60, 60000);
   
   if (rateLimit.isRateLimited) {
     return new Response(JSON.stringify({ message: 'Too many requests. Please try again later.' }), {
@@ -65,7 +65,7 @@ export async function GET(req) {
 // POST: Add a new organization and create its lead recruiter (Admin only)
 export async function POST(req) {
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-  const rateLimit = checkRateLimit(`org_post_${ip}`, 20, 60000);
+  const rateLimit = await checkRateLimit(`org_post_${ip}`, 20, 60000);
   
   if (rateLimit.isRateLimited) {
     return new Response(JSON.stringify({ message: 'Too many requests. Please try again later.' }), {
@@ -219,7 +219,7 @@ export async function POST(req) {
 // PUT: Update organization details. If lead recruiter email changes, delete old recruiter and create new recruiter account (Admin only)
 export async function PUT(req) {
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-  const rateLimit = checkRateLimit(`org_put_${ip}`, 20, 60000);
+  const rateLimit = await checkRateLimit(`org_put_${ip}`, 20, 60000);
   
   if (rateLimit.isRateLimited) {
     return new Response(JSON.stringify({ message: 'Too many requests. Please try again later.' }), {
@@ -423,7 +423,7 @@ export async function PUT(req) {
 // DELETE: Delete organization and cascade delete its users (Admin only)
 export async function DELETE(req) {
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-  const rateLimit = checkRateLimit(`org_delete_${ip}`, 20, 60000);
+  const rateLimit = await checkRateLimit(`org_delete_${ip}`, 20, 60000);
   
   if (rateLimit.isRateLimited) {
     return new Response(JSON.stringify({ message: 'Too many requests. Please try again later.' }), {

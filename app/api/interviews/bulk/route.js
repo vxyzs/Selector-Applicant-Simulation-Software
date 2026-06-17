@@ -14,7 +14,7 @@ const bulkUploadSchema = z.object({
 export async function POST(req) {
   // 1. Rate Limiting: 60 requests per minute per IP
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-  const rateLimit = checkRateLimit(`interviews_bulk_post_${ip}`, 60, 60000);
+  const rateLimit = await checkRateLimit(`interviews_bulk_post_${ip}`, 60, 60000);
   
   if (rateLimit.isRateLimited) {
       return new Response(JSON.stringify({ message: 'Too many requests. Please try again later.' }), {
