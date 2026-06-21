@@ -26,7 +26,7 @@ export async function PATCH(request) {
         const file = data.get('resume');
         
         // 2. File validation using validation service
-        const validation = validateResume(file);
+        const validation = await validateResume(file);
         if (!validation.valid) {
             return NextResponse.json({ error: validation.error }, { status: 400 });
         }

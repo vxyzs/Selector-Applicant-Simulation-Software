@@ -49,6 +49,29 @@ export async function POST(req) {
       { $set: { password: hashedNewPassword } }
     );
 
+    // Blacklist the current token to log out the active session on password change
+    const authHeader = req.headers.get('Authorization') || req.headers.get('authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      if (token && process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+        try {
+          const { Redis } = await import('@upstash/redis');
+          const redis = new Redis({
+            url: process.env.UPSTASH_REDIS_REST_URL,
+            token: process.env.UPSTASH_REDIS_REST_TOKEN,
+          });
+          const now = Math.floor(Date.now() / 1000);
+          const remainingSeconds = (auth.user.exp || (now + 1296000)) - now;
+          if (remainingSeconds > 0) {
+            await redis.set(`blacklist:${token}`, 'true', { ex: remainingSeconds });
+            console.log(`[Change Password] Active token blacklisted successfully. Remaining TTL: ${remainingSeconds}s`);
+          }
+        } catch (e) {
+          console.warn('[Change Password] Failed to blacklist token on password change:', e.message);
+        }
+      }
+    }
+
     return NextResponse.json({ message: 'Password updated successfully' }, { status: 200 });
   } catch (error) {
     console.error('Error in change-password API route:', error);

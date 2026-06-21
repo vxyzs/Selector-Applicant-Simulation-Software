@@ -147,13 +147,25 @@ export async function GET(request) {
                 }
             }
 
-            interview.evaluationsBreakdown = evaluationsBreakdown;
-            interview.evaluationsCount = totalCompleted;
+            // Enforce blind assessment security:
+            // Experts who have NOT completed their evaluation cannot see other experts' scores/comments or the overall averages.
+            const hasCallerCompleted = interview.evaluations?.[callerId]?.status === 'completed';
 
-            // If at least one evaluation has been submitted, present the average score as the overall candidate score
-            if (totalCompleted > 0) {
-                interview.totalScore = Math.round(sumTotalScore / totalCompleted);
-                interview.maxScore = Math.round(sumMaxScore / totalCompleted);
+            if (isCallerExpert && !hasCallerCompleted) {
+                interview.evaluationsBreakdown = [];
+                interview.evaluationsCount = totalCompleted;
+                delete interview.evaluations;
+                delete interview.totalScore;
+                delete interview.maxScore;
+            } else {
+                interview.evaluationsBreakdown = evaluationsBreakdown;
+                interview.evaluationsCount = totalCompleted;
+
+                // If at least one evaluation has been submitted, present the average score as the overall candidate score
+                if (totalCompleted > 0) {
+                    interview.totalScore = Math.round(sumTotalScore / totalCompleted);
+                    interview.maxScore = Math.round(sumMaxScore / totalCompleted);
+                }
             }
         }
 
