@@ -6,6 +6,14 @@ Built to simulate realistic enterprise interview workflows, Nexus combines colla
 
 ---
 
+# 🎥 Demonstration Video
+Explore the platform interface and walkthrough demonstration:
+
+<video src="public/videos/Demo Nexus Interview.mp4" controls width="100%"></video>
+
+---
+
+
 # ✨ Core Features
 
 ## 🧠 AI Resume-Aware Question Generation

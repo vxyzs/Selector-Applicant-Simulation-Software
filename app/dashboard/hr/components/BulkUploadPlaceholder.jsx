@@ -377,7 +377,7 @@ export default function BulkUploadPlaceholder() {
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 w-full">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
                 <Button size="sm" variant="solid" color="primary" className="font-semibold text-white px-5 shadow-sm" onClick={triggerFileSelect}>
                   Browse Local Files
                 </Button>
