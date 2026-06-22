@@ -1,5 +1,5 @@
 "use client"
-import { useState, useRef, Fragment } from "react"
+import { useState, useRef, Fragment, useEffect } from "react"
 import { Dialog, Transition } from "@headlessui/react"
 import Image from "next/image"
 
@@ -14,6 +14,17 @@ export default function ModalVideo({
 }) {
   const [modalOpen, setModalOpen] = useState(false)
   const videoRef = useRef(null)
+
+  const [showNote, setShowNote] = useState(true);
+
+  const handleModalOpen = () => {
+    setModalOpen(true);
+    setShowNote(true);
+
+    setTimeout(() => {
+      setShowNote(false);
+    }, 5000);
+  };
 
   return (
     <div>
@@ -101,7 +112,7 @@ export default function ModalVideo({
           <button
             className="absolute top-full flex items-center transform -translate-y-1/2 bg-white rounded-full font-medium group p-4 shadow-lg"
             onClick={() => {
-              setModalOpen(true)
+              handleModalOpen();
             }}
           >
             <svg
@@ -112,7 +123,7 @@ export default function ModalVideo({
               <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm0 2C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12z" />
               <path d="M10 17l6-5-6-5z" />
             </svg>
-            <span className="ml-3">Watch the full video (2 min)</span>
+            <span className="ml-3">Watch video for reference</span>
           </button>
         </div>
       </div>
@@ -147,8 +158,23 @@ export default function ModalVideo({
             leaveFrom="oopacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
+
             <div className="max-w-6xl mx-auto h-full flex items-center">
-              <Dialog.Panel className="w-full max-h-full aspect-video bg-black overflow-hidden">
+              <Dialog.Panel className="relative w-full max-h-full aspect-video bg-black overflow-hidden rounded-xl">
+
+                {/* Caption */}
+                {showNote && (
+                  <div className="absolute top-4 left-4 z-10 max-w-md bg-black/70 backdrop-blur-sm text-white px-4 py-3 rounded-lg">
+                    <p className="text-sm font-semibold">
+                      AI-Generated Demonstration
+                    </p>
+                    <p className="text-xs text-gray-200 mt-1">
+                      This video is a conceptual AI-generated showcase of Nexus. The actual
+                      application interface and visuals may differ from those shown.
+                    </p>
+                  </div>
+                )}
+
                 <video
                   ref={videoRef}
                   width={videoWidth}
@@ -159,6 +185,7 @@ export default function ModalVideo({
                   <source src={video} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
+
               </Dialog.Panel>
             </div>
           </Transition.Child>
