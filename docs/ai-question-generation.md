@@ -80,7 +80,7 @@ Categories vary dynamically by seniority. The pipeline prevents generic categori
 ### Structural Comparison Example:
 If the input role is **Fullstack Engineer**, the pipeline designs different categories based on seniority:
 
-````carousel
+
 Junior Profile
 ```json
 [
@@ -112,7 +112,7 @@ Senior Profile
   }
 ]
 ```
-````
+
 
 ---
 

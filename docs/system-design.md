@@ -72,25 +72,7 @@ mindmap
 
 Nexus utilizes a modern, serverless architecture that separates the presentation layer, business logic APIs, data layer, caching layer, and third-party integrations.
 
-```mermaid
-graph TD
-    Client <--> API[Next.js Serverless API Route Handlers]
-    
-    subgraph Core Services
-        API <--> DB[(MongoDB Database)]
-        API <--> Cache[(Upstash Redis Cache)]
-    end
-
-    subgraph Security Layer
-        API <--> Auth[JWT Validation & RBAC Middleware]
-    end
-
-    subgraph External Infrastructure
-        API <--> Cloudinary[Cloudinary PDF Storage]
-        API <--> LLM[Hugging Face LLM Client]
-        API <--> SMTP[Nodemailer SMTP Service]
-    end
-```
+![High-Level Architecture Diagram](/docs/HLD.png)
 
 ### Component Details:
 1. **Presentation Layer**: Built on Next.js 14 App Router, NextUI, and Tailwind CSS. State handling is managed reactively, updating components via unified REST requests.
